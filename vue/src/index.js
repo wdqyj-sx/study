@@ -1,4 +1,9 @@
-let a = 1;
-console.log(a);
+import { initMixin } from "./init";
 
-export default a;
+function Vue(options) {
+    //options 为传入的选项
+    this._init(options)
+}
+initMixin(Vue);
+
+export default Vue;
