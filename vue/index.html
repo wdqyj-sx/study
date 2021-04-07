@@ -12,15 +12,15 @@
     <script>
         let vm = new Vue({
             el:'#app',
-            data:{
-                name:'sx',
-                age:{
-                    a:18
+            data(){
+                return {
+                    name:[1,2,3]
                 }
             }
         })
-        vm._data.name = {ns:"sx"}
-         console.log(vm)
+        console.log(vm.name)
+        vm.name.push()
+        // console.log(vm.$options.data.name)
     </script>
 </body>
 </html>

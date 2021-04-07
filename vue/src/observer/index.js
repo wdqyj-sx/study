@@ -1,10 +1,17 @@
+import { arrayMethods } from "../array";
 import { isObject } from "../utils";
 
 // 创建观测者
 class Observer{
     constructor(data){
+        if(Array.isArray(data)){
+            data.__propo__ = arrayMethods;
+            // console.log(data)
+        }
+        else {
         //对对象中的所有属性进行劫持
         this.walk(data);
+        }
     }
     walk(data){
         Object.keys(data).forEach(key =>{

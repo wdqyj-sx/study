@@ -42,6 +42,15 @@
     return Constructor;
   }
 
+  var oldArrayPrototype = Array.prototype;
+  var arrayMethods = Object.create(oldArrayPrototype);
+  var methods = ['push', 'shift', 'unshift', 'pop', 'reverse', 'sort', 'splice'];
+  methods.forEach(function (method) {
+    arrayMethods[method] = function () {
+      console.log('数组改变了'); // oldArrayPrototype[method].call(this,...args);
+    };
+  });
+
   function isFunction(val) {
     return typeof val === 'function';
   }
@@ -53,8 +62,12 @@
     function Observer(data) {
       _classCallCheck(this, Observer);
 
-      //对对象中的所有属性进行劫持
-      this.walk(data);
+      if (Array.isArray(data)) {
+        data.__propo__ = arrayMethods; // console.log(data)
+      } else {
+        //对对象中的所有属性进行劫持
+        this.walk(data);
+      }
     }
 
     _createClass(Observer, [{
@@ -101,11 +114,26 @@
     }
   }
 
+  function proxy(vm, source, key) {
+    Object.defineProperty(vm, key, {
+      get: function get() {
+        return vm[source][key];
+      },
+      set: function set(newV) {
+        vm[source][key] = newV;
+      }
+    });
+  }
+
   function initData(vm) {
     var data = vm.$options.data; // 判断data是函数还是对象,获取其对象数据
 
-    data = vm._data = isFunction(data) ? data(vm) : data;
-    console.log(vm._data); //观察数据
+    data = vm._data = isFunction(data) ? data(vm) : data; // 将数据挂载到vm上
+
+    for (var key in data) {
+      proxy(vm, '_data', key);
+    } //观察数据
+
 
     observe(data);
   }
