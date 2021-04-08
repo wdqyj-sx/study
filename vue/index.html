@@ -14,12 +14,14 @@
             el:'#app',
             data(){
                 return {
-                    name:[1,2,3]
+                    name:[1,2,3],
+                    age:{'xiaom':'18'}
                 }
             }
         })
-        console.log(vm.name)
-        vm.name.push()
+        console.log(vm.age)
+        vm.name.push({'sx':19});
+        
         // console.log(vm.$options.data.name)
     </script>
 </body>

@@ -47,7 +47,34 @@
   var methods = ['push', 'shift', 'unshift', 'pop', 'reverse', 'sort', 'splice'];
   methods.forEach(function (method) {
     arrayMethods[method] = function () {
-      console.log('数组改变了'); // oldArrayPrototype[method].call(this,...args);
+      var _oldArrayPrototype$me;
+
+      console.log('数组改变了');
+
+      for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+        args[_key] = arguments[_key];
+      }
+
+      (_oldArrayPrototype$me = oldArrayPrototype[method]).call.apply(_oldArrayPrototype$me, [this].concat(args)); // 通过push、unshift、splice方法也可能对数据进行更改
+
+
+      var po = this.__po__;
+      var inserted;
+
+      switch (method) {
+        case 'push':
+        case 'unshift':
+          inserted = args;
+          break;
+
+        case 'splice':
+          inserted = args.slice(2);
+          break;
+      }
+
+      if (inserted) {
+        po.observeArray(inserted);
+      }
     };
   });
 
@@ -62,15 +89,30 @@
     function Observer(data) {
       _classCallCheck(this, Observer);
 
+      // data.__po__ = this;
+      Object.defineProperty(data, '__po__', {
+        value: this,
+        enumerable: false
+      });
+
       if (Array.isArray(data)) {
-        data.__propo__ = arrayMethods; // console.log(data)
+        data.__proto__ = arrayMethods;
+        this.observeArray(data);
       } else {
         //对对象中的所有属性进行劫持
         this.walk(data);
       }
-    }
+    } // 如果数组中包含对象，则再次被监控
+
 
     _createClass(Observer, [{
+      key: "observeArray",
+      value: function observeArray(data) {
+        data.forEach(function (item) {
+          observe(data);
+        });
+      }
+    }, {
       key: "walk",
       value: function walk(data) {
         Object.keys(data).forEach(function (key) {
@@ -98,6 +140,10 @@
   function observe(data) {
     // 判断数据是否为对象
     if (!isObject(data)) {
+      return;
+    }
+
+    if (data.__po__) {
       return;
     } //创建观测者来观测数据
 
