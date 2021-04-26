@@ -19,10 +19,11 @@
                 }
             }
         })
-        console.log(vm.age)
-        vm.name.push({'sx':19});
+        //数据变化需要影响视图，因此需要将数据和页面渲染关联起来
+        vm.$mount('#app');
+      
         
-        // console.log(vm.$options.data.name)
+        
     </script>
 </body>
 </html>

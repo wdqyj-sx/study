@@ -37,7 +37,7 @@ function defineReactive(data,key,value){
             return value;
         },
         set(newV) {
-            // observe(value)
+             observe(value)
             value = newV;
         }
     })
