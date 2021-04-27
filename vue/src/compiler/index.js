@@ -7,6 +7,7 @@ export function compileToFunction(template){
    let root = parseHTML(template);
     // 将ast树生成代码
     let code = generate(root);
- 
+    let root = new Function(`with(this){return ${code}}`);
+    return root;
    
 }
